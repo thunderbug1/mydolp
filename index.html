@@ -317,6 +317,7 @@
                 async function toTry() {
                     time('Connecting to Bluetooth Device... ');
                     let server = await bluetoothDevice.gatt.connect();
+                    let serviceUuid = "53300002-0023-4bd4-bbd5-a6920e4c5653"; // read-write_2 UUID
                     let service = await server.getPrimaryService(serviceUuid);
                     let characteristic = await service.getCharacteristic(characteristicUuid);
                     myDescriptor = await characteristic.getDescriptor('gatt.characteristic_user_description');
@@ -365,7 +366,7 @@
                 log(value);
 
                 if (connected) {
-                    myDescriptor.writeValue(encoder.encode(value))
+                    myDescriptor.writeValue(encoder.encode("Vibrate:") + encoder.encode(value))
                         .then(_ => {
                             log('> Characteristic User Description changed to: ' + value);
                         })
@@ -386,7 +387,7 @@
         })
     </script>
     <div class="slidecontainer">
-        <input type="range" min="0" max="100" value="50" class="slider" id="intensity">
+        <input type="range" min="0" max="20" value="10" class="slider" id="intensity">
     </div>
 </body>
 
