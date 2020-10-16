@@ -297,72 +297,78 @@
 
         var log = console.log;
 
-        navigator.bluetooth.requestDevice({
-                filters: [{
-                    namePrefix: "LVS"
-                }]
-            })
-            .then(device => {
-                bluetoothDevice = device;
-                bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
-                connect();
-            })
-            .catch(error => {
-                log('Argh! ' + error);
-            });
-
-
-        async function connect() {
-            exponentialBackoff(3 /* max retries */ , 2 /* seconds delay */ ,
-                async function toTry() {
-                    time('Connecting to Bluetooth Device... ');
-                    let server = await bluetoothDevice.gatt.connect();
-                    //let notify_serviceUuid = "53300003-0023-4bd4-bbd5-a6920e4c5653"; 
-                    //let service_serviceUuid = "53300001-0023-4bd4-bbd5-a6920e4c5653"; 
-                    let read_write_serviceUuid = "53300002-0023-4bd4-bbd5-a6920e4c5653";
-                    let service = await server.getPrimaryService(read_write_serviceUuid);
-                    let characteristic = await service.getCharacteristic(characteristicUuid);
-                    myDescriptor = await characteristic.getDescriptor('gatt.characteristic_user_description');
-                },
-                function success() {
-                    log('> Bluetooth Device connected. Try disconnect it now.');
-                    connected = true;
-                },
-                function fail() {
-                    time('Failed to reconnect.');
-                    connected = false;
-                });
-        }
-
-        function onDisconnected() {
-            log('> Bluetooth Device disconnected');
-            connected = false;
-            connect();
-        }
-
-        /* Utils */
-
-        // This function keeps calling "toTry" until promise resolves or has
-        // retried "max" number of times. First retry has a delay of "delay" seconds.
-        // "success" is called upon success.
-        function exponentialBackoff(max, delay, toTry, success, fail) {
-            toTry().then(result => success(result))
-                .catch(_ => {
-                    if (max === 0) {
-                        return fail();
-                    }
-                    time('Retrying in ' + delay + 's... (' + max + ' tries left)');
-                    setTimeout(function() {
-                        exponentialBackoff(--max, delay * 2, toTry, success, fail);
-                    }, delay * 1000);
-                });
-        }
-
-        function time(text) {
-            log('[' + new Date().toJSON().substr(11, 8) + '] ' + text);
-        }
-
         window.addEventListener('load', function() {
+
+            var connection_label = document.getElementById("connection_status");
+            connection_label.innerHTML = "not connected";
+
+            navigator.bluetooth.requestDevice({
+                    filters: [{
+                        namePrefix: "LVS"
+                    }]
+                })
+                .then(device => {
+                    bluetoothDevice = device;
+                    bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+                    connect();
+                })
+                .catch(error => {
+                    log('Argh! ' + error);
+                });
+
+
+            async function connect() {
+                exponentialBackoff(3 /* max retries */ , 2 /* seconds delay */ ,
+                    async function toTry() {
+                        time('Connecting to Bluetooth Device... ');
+                        let server = await bluetoothDevice.gatt.connect();
+                        //let notify_serviceUuid = "53300003-0023-4bd4-bbd5-a6920e4c5653"; 
+                        //let service_serviceUuid = "53300001-0023-4bd4-bbd5-a6920e4c5653"; 
+                        let read_write_serviceUuid = "53300002-0023-4bd4-bbd5-a6920e4c5653";
+                        let service = await server.getPrimaryService(read_write_serviceUuid);
+                        let characteristic = await service.getCharacteristic(characteristicUuid);
+                        myDescriptor = await characteristic.getDescriptor('gatt.characteristic_user_description');
+                    },
+                    function success() {
+                        log('> Bluetooth Device connected. Try disconnect it now.');
+                        connected = true;
+                        connection_label.innerHTML = "connected";
+                    },
+                    function fail() {
+                        time('Failed to reconnect.');
+                        connected = false;
+                        connection_label.innerHTML = "not connected";
+                    });
+            }
+
+            function onDisconnected() {
+                log('> Bluetooth Device disconnected');
+                connected = false;
+                connection_label.innerHTML = "not connected";
+                connect();
+            }
+
+            /* Utils */
+
+            // This function keeps calling "toTry" until promise resolves or has
+            // retried "max" number of times. First retry has a delay of "delay" seconds.
+            // "success" is called upon success.
+            function exponentialBackoff(max, delay, toTry, success, fail) {
+                toTry().then(result => success(result))
+                    .catch(_ => {
+                        if (max === 0) {
+                            return fail();
+                        }
+                        time('Retrying in ' + delay + 's... (' + max + ' tries left)');
+                        setTimeout(function() {
+                            exponentialBackoff(--max, delay * 2, toTry, success, fail);
+                        }, delay * 1000);
+                    });
+            }
+
+            function time(text) {
+                log('[' + new Date().toJSON().substr(11, 8) + '] ' + text);
+            }
 
             function sendIntensity(value) {
                 log(value);
@@ -388,6 +394,7 @@
             }
         })
     </script>
+    <label>Connection Status: </label><label id="connection_status"></label>
     <div class="slidecontainer">
         <input type="range" min="0" max="20" value="10" class="slider" id="intensity">
     </div>
