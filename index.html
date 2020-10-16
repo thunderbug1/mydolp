@@ -317,8 +317,10 @@
                 async function toTry() {
                     time('Connecting to Bluetooth Device... ');
                     let server = await bluetoothDevice.gatt.connect();
-                    let serviceUuid = "53300002-0023-4bd4-bbd5-a6920e4c5653"; // read-write_2 UUID
-                    let service = await server.getPrimaryService(serviceUuid);
+                    //let notify_serviceUuid = "53300003-0023-4bd4-bbd5-a6920e4c5653"; 
+                    //let service_serviceUuid = "53300001-0023-4bd4-bbd5-a6920e4c5653"; 
+                    let read_write_serviceUuid = "53300002-0023-4bd4-bbd5-a6920e4c5653";
+                    let service = await server.getPrimaryService(read_write_serviceUuid);
                     let characteristic = await service.getCharacteristic(characteristicUuid);
                     myDescriptor = await characteristic.getDescriptor('gatt.characteristic_user_description');
                 },
