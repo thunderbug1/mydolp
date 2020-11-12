@@ -1,9 +1,165 @@
+<!DOCTYPE html>
 <html>
 
 <head>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="shortcut icon" type="image/png" href="image/favicon.png">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to Firebase Hosting</title>
+
+    <!-- update the version number as needed -->
+    <script defer src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="https://www.gstatic.com/firebasejs/7.24.0/firebase-auth.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.24.0/firebase-database.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.24.0/firebase-messaging.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.24.0/firebase-storage.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.24.0/firebase-analytics.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.24.0/firebase-remote-config.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.24.0/firebase-performance.js"></script>
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+    <!--<script defer src="https://mydolp-1.firebaseapp.com/firebase/init.js"></script>-->
+
+
+
+
+
+
+    <style>
+        html {
+            background: url(https://image.freepik.com/free-vector/elegant-red-background_1340-4770.jpg) no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+            color: #FF6666;
+        }
+        
+        body {
+            position: fixed;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            height: 100%;
+            width: 100%;
+        }
+        /* The slider itself */
+        
+        input[type=range][orient=vertical]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            /* Override default look */
+            appearance: none;
+            height: 15vh;
+            width: 15vh;
+            border-radius: 50%;
+            /* Slider handle height */
+            background: #f50d05;
+            cursor: pointer;
+        }
+        
+        input[type=range][orient=vertical] {
+            writing-mode: bt-lr;
+            -webkit-appearance: none;
+            /* IE */
+            -webkit-appearance: slider-vertical;
+            background: #e4c2c2;
+            opacity: 0.7;
+            /* WebKit */
+            /*width: 50px;*/
+            /*height: 475px;*/
+            padding: 0 5px;
+            height: 100%;
+            width: 100%;
+        }
+        
+        input[type="range"]:focus {
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: linear-gradient(180deg, rgb(248, 92, 81) 0%, rgb(155, 25, 38) 35%, rgb(27, 5, 5) 100%);
+            height: 5px;
+            /*opacity: 0.5;*/
+        }
+        
+        .center {
+            margin: auto;
+            /*width: 60%;
+            padding: 10px;*/
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: center;
+            align-items: center;
+            /*height: 200px;*/
+            margin: 0;
+            padding: 0;
+            border: 0;
+            height: 70%;
+        }
+        
+        body {
+            font-family: italic, cursive;
+        }
+        
+        #app-header {
+            /* fix the header to the top of the viewport. */
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            /* this should match the min-width in app-container. Recommend setting using a common variable (eg with Sass) */
+            min-width: 100%;
+            /* just arbitrary values */
+            height: 4em;
+            padding: 1em;
+            /* internal layout, centered vertically - flex layout is great for this */
+            display: flex;
+            flex-flow: row nowrap;
+            align-items: center;
+            /* just so we can tell the header apart */
+            /*background-color: rgb(216, 28, 15);
+    color: rgb(214, 141, 141);
+*/
+            background: rgb(2, 0, 36);
+            background: linear-gradient(180deg, rgb(87, 12, 7) 0%, rgb(155, 25, 38) 35%, rgb(124, 21, 21) 100%);
+        }
+        
+        #app-header h1 {
+            /* set the h1 block as the main flex block - it will fill all unused space in the block */
+            flex: 1;
+            /* center content inside the block */
+            text-align: center;
+        }
+        
+        #app-container {
+            padding-top: 8em;
+            height: 70%;
+        }
+    </style>
 </head>
 
 <body>
+    <div id="app-header">
+        <i class="material-icons">menu</i>
+        <h1>Mwah <img src="image/kiss_lips.png" width="20" height="20"></h1>
+        <!--<i class="material-icons">login</i>-->
+    </div>
+    <div id="app-container">
+        <label>Connection Status: </label><label id="connection_status">not connected</label>
+        <div class="center">
+            <input type="range" min="0" max="20" value="10" class="slider" id="intensity" , orient="vertical">
+        </div>
+        <div style="text-align:center">
+            <label>Intensity</label>
+        </div>
+    </div>
+
+    <script defer src="https://cdn.rollbar.com/rollbarjs/refs/tags/v2.15.0/rollbar.min.js"></script>
+
     <script>
         var _rollbarConfig = {
             accessToken: "3f156ad853c043b29a4912e1cfcf9736",
@@ -63,7 +219,7 @@
             "use strict";
             var n = o(1),
                 t = o(5);
-            _rollbarConfig = _rollbarConfig || {}, _rollbarConfig.rollbarJsUrl = _rollbarConfig.rollbarJsUrl || "https://cdn.rollbar.com/rollbarjs/refs/tags/v2.19.2/rollbar.min.js", _rollbarConfig.async = void 0 === _rollbarConfig.async || _rollbarConfig.async;
+            _rollbarConfig = _rollbarConfig || {}, _rollbarConfig.rollbarJsUrl = _rollbarConfig.rollbarJsUrl || "https://cdn.rollbar.com/rollbarjs/refs/tags/v2.19.4/rollbar.min.js", _rollbarConfig.async = void 0 === _rollbarConfig.async || _rollbarConfig.async;
             var a = n.setupShim(window, _rollbarConfig),
                 l = t(_rollbarConfig);
             window.rollbar = n.Rollbar, a.loadFull(window, document, !_rollbarConfig.async, _rollbarConfig, l)
@@ -288,14 +444,94 @@
             }
         }]);
         // End Rollbar Snippet
-    </script>
-    <script>
+
+        //var Rollbar = require("rollbar");
+        //var rollbar = new Rollbar("POST_SERVER_ITEM_ACCESS_TOKEN");
+
+
+
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Your web app's Firebase configuration
+            // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+            var firebaseConfig = {
+                apiKey: "AIzaSyC9rGf5zeNVl_7-f2gievbEEE7trg-ne7o",
+                authDomain: "mydolp-1.firebaseapp.com",
+                databaseURL: "https://mydolp-1.firebaseio.com",
+                projectId: "mydolp-1",
+                storageBucket: "mydolp-1.appspot.com",
+                messagingSenderId: "1055827577018",
+                appId: "1:1055827577018:web:bd02be128ed719dc125a83" //,
+                    //measurementId: "G-Y9BPP31QSM"
+            };
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            firebase.analytics();
+
+            const loadEl = document.querySelector('#load');
+            // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+            // // The Firebase SDK is initialized and available here!
+            //
+            // firebase.auth().onAuthStateChanged(user => { });
+            // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
+            // firebase.messaging().requestPermission().then(() => { });
+            // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
+            analytics = firebase.analytics(); // call to activate
+            // firebase.analytics().logEvent('tutorial_completed');
+            // firebase.performance(); // call to activate
+            //
+            // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+
+            try {
+                let app = firebase.app();
+                let features = [
+                    'auth',
+                    'database',
+                    'messaging',
+                    'storage',
+                    'analytics',
+                    'remoteConfig',
+                    'performance',
+                ].filter(feature => typeof app[feature] === 'function');
+                //loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
+            } catch (e) {
+                console.error(e);
+                //loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+            }
+            /*analytics.logEvent('select_content', {
+                content_type: 'image',
+                content_id: 'P12453',
+                items: [{
+                    name: 'Kittens'
+                }]
+            });*/
+
+        });
+
         var myDescriptor;
         var bluetoothDevice;
         var connected = false;
         var encoder = new TextEncoder('utf-8');
 
-        var log = console.log;
+        //var log = console.log;
+        var notify = function(message, source, lineno, colno, error) {
+            alert(message + " in line: " + String(lineno));
+            console.log(message);
+            //window.onerror("TestRollbarError: testing window.onerror", window.location.href)
+            /*Rollbar.critical(message);*/
+            analytics.logEvent('error_occured', {
+                message: message,
+                source: source,
+                lineno: lineno,
+                colno: colno,
+                error: error
+            });
+            throw new Error(message);
+        };
+        var log = notify;
+        window.onerror = notify;
 
         window.addEventListener('load', function() {
 
@@ -313,7 +549,7 @@
                     connect();
                 })
                 .catch(error => {
-                    log('Argh! ' + error);
+                    log('requestDevice Error: ' + error);
                 });
 
 
@@ -324,7 +560,8 @@
                         let server = await bluetoothDevice.gatt.connect();
                         //let notify_serviceUuid = "53300003-0023-4bd4-bbd5-a6920e4c5653"; 
                         //let service_serviceUuid = "53300001-0023-4bd4-bbd5-a6920e4c5653"; 
-                        let read_write_serviceUuid = "53300002-0023-4bd4-bbd5-a6920e4c5653";
+                        let read_write_serviceUuid = "53300001-0023-4bd4-bbd5-a6920e4c5653";
+                        let characteristicUuid = "53300002-0023-4bd4-bbd5-a6920e4c5653";
                         let service = await server.getPrimaryService(read_write_serviceUuid);
                         let characteristic = await service.getCharacteristic(characteristicUuid);
                         myDescriptor = await characteristic.getDescriptor('gatt.characteristic_user_description');
@@ -394,60 +631,8 @@
             }
         })
     </script>
-    <style>
-        html {
-            background: url(https://image.freepik.com/free-vector/elegant-red-background_1340-4770.jpg) no-repeat center center fixed;
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
-            background-size: cover;
-            color: #FF6666;
-        }
-        /* The slider itself */
-        
-        .slider {
-            -webkit-appearance: none;
-            /* Override default CSS styles */
-            /*appearance: none;*/
-            width: 100%;
-            /* Full-width */
-            height: 25px;
-            /* Specified height */
-            background: #e4c2c2;
-            /* Grey background */
-            /*outline: none;
-            /* Remove outline */
-            opacity: 0.7;
-            /* Set transparency (for mouse-over effects on hover) */
-            -webkit-transition: .2s;
-            /* 0.2 seconds transition on hover */
-            transition: opacity .2s;
-        }
-        /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
-        
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            /* Override default look */
-            appearance: none;
-            width: 25px;
-            /* Set a specific slider handle width */
-            height: 25px;
-            border-radius: 50%;
-            /* Slider handle height */
-            background: #f50d05;
-            cursor: pointer;
-        }
-        
-        @font-face {
-            font-family: Chancery;
-            font-style: cursive;
-        }
-    </style>
 
-    <label>Connection Status: </label><label id="connection_status">not connected</label>
-    <div class="slidecontainer">
-        <input type="range" min="0" max="20" value="10" class="slider" id="intensity">
-    </div>
+
 </body>
 
 </html>
